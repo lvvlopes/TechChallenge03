@@ -1,0 +1,21 @@
+DIAGRAMA DO FLUXO LANGGRAPH - MedAssist
+========================================
+
+[ENTRADA]
+    |
+    v
+[TRIAGEM] --- emergencia ---> [EMERGENCIA] ---+
+    |                                         |
+    v                                         |
+[BUSCA RAG]                                   |
+    |                                         |
+    v                                         |
+[GERACAO via OpenAI]                          |
+    |                                         |
+    +--------------------+--------------------+
+                         |
+                         v
+                    [VALIDACAO]
+                         |
+                         v
+                       [FIM]

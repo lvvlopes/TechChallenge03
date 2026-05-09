@@ -1,0 +1,1388 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MedAssist — Sistema de Apoio Clínico</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Source+Sans+3:wght@300;400;500;600&family=Source+Code+Pro:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ── Reset & base ─────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  /* Palette */
+  --white:      #ffffff;
+  --off-white:  #f7f8fa;
+  --gray-50:    #f0f2f5;
+  --gray-100:   #e4e7ec;
+  --gray-200:   #d0d5dd;
+  --gray-300:   #98a2b3;
+  --gray-400:   #667085;
+  --gray-500:   #475467;
+  --gray-700:   #344054;
+  --gray-900:   #101828;
+
+  --blue-50:    #eff8ff;
+  --blue-100:   #d1e9ff;
+  --blue-500:   #2e90fa;
+  --blue-600:   #1570ef;
+  --blue-700:   #175cd3;
+  --blue-900:   #0d2d6b;
+
+  --teal-50:    #f0fdf9;
+  --teal-500:   #15b79e;
+  --teal-600:   #0e9384;
+
+  --red-50:     #fff1f0;
+  --red-100:    #ffe0de;
+  --red-500:    #f04438;
+  --red-600:    #d92d20;
+
+  --amber-50:   #fffaeb;
+  --amber-400:  #fdb022;
+  --amber-600:  #dc6803;
+
+  --green-50:   #f0fdf4;
+  --green-500:  #17b26a;
+  --green-600:  #079455;
+
+  /* Shadows */
+  --shadow-xs:  0 1px 2px rgba(16,24,40,.05);
+  --shadow-sm:  0 1px 3px rgba(16,24,40,.1), 0 1px 2px rgba(16,24,40,.06);
+  --shadow-md:  0 4px 8px -2px rgba(16,24,40,.1), 0 2px 4px -2px rgba(16,24,40,.06);
+  --shadow-lg:  0 12px 16px -4px rgba(16,24,40,.08), 0 4px 6px -2px rgba(16,24,40,.03);
+  --shadow-xl:  0 20px 24px -4px rgba(16,24,40,.08), 0 8px 8px -4px rgba(16,24,40,.03);
+
+  /* Radii */
+  --r-sm:  6px;
+  --r-md:  8px;
+  --r-lg:  12px;
+  --r-xl:  16px;
+  --r-2xl: 20px;
+}
+
+html, body {
+  height: 100%;
+  background: var(--off-white);
+  color: var(--gray-900);
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── App shell ────────────────────────────────────────────────────────────── */
+.app {
+  display: grid;
+  grid-template-rows: 60px 1fr;
+  grid-template-columns: 260px 1fr 300px;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ── Topbar ───────────────────────────────────────────────────────────────── */
+.topbar {
+  grid-column: 1 / -1;
+  background: var(--white);
+  border-bottom: 1px solid var(--gray-100);
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  gap: 16px;
+  box-shadow: var(--shadow-xs);
+  z-index: 10;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.brand-mark {
+  width: 34px;
+  height: 34px;
+  background: var(--blue-600);
+  border-radius: var(--r-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.brand-mark svg { width: 18px; height: 18px; }
+
+.brand-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 19px;
+  font-weight: 600;
+  color: var(--gray-900);
+  letter-spacing: -0.3px;
+  line-height: 1;
+}
+
+.brand-tagline {
+  font-size: 11px;
+  color: var(--gray-400);
+  font-weight: 400;
+  letter-spacing: 0.1px;
+  margin-top: 1px;
+}
+
+.topbar-divider {
+  width: 1px;
+  height: 28px;
+  background: var(--gray-100);
+  margin: 0 4px;
+}
+
+.topbar-center { flex: 1; }
+
+/* Status chips */
+.status-chips {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.chip-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.chip-online { background: var(--green-50); color: var(--green-600); border-color: #d1fadf; }
+.chip-online .chip-dot { background: var(--green-500); animation: blink 2s infinite; }
+.chip-blue   { background: var(--blue-50);  color: var(--blue-700);  border-color: var(--blue-100); }
+.chip-gray   { background: var(--gray-50);  color: var(--gray-500);  border-color: var(--gray-100); }
+
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.35} }
+
+.topbar-actions { display: flex; align-items: center; gap: 8px; }
+
+.btn-icon {
+  width: 34px; height: 34px;
+  border: 1px solid var(--gray-200);
+  background: var(--white);
+  border-radius: var(--r-md);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--gray-400);
+  transition: all .15s;
+  font-size: 15px;
+}
+.btn-icon:hover { border-color: var(--gray-300); color: var(--gray-700); box-shadow: var(--shadow-xs); }
+
+.btn-config {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 14px;
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--r-md);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--gray-700);
+  cursor: pointer;
+  font-family: 'Source Sans 3', sans-serif;
+  transition: all .15s;
+  box-shadow: var(--shadow-xs);
+}
+.btn-config:hover { border-color: var(--blue-500); color: var(--blue-600); }
+
+/* ── Left nav ─────────────────────────────────────────────────────────────── */
+.sidebar-left {
+  background: var(--white);
+  border-right: 1px solid var(--gray-100);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.nav-section { padding: 16px 12px 8px; }
+
+.nav-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .8px;
+  color: var(--gray-300);
+  text-transform: uppercase;
+  padding: 0 8px;
+  margin-bottom: 4px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 10px;
+  border: none;
+  background: none;
+  border-radius: var(--r-md);
+  cursor: pointer;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 13px;
+  color: var(--gray-500);
+  text-align: left;
+  transition: all .12s;
+  line-height: 1.4;
+  margin-bottom: 2px;
+}
+
+.nav-item:hover { background: var(--gray-50); color: var(--gray-700); }
+.nav-item:active { background: var(--blue-50); color: var(--blue-700); }
+
+.nav-icon {
+  width: 28px; height: 28px;
+  border-radius: var(--r-sm);
+  background: var(--gray-50);
+  border: 1px solid var(--gray-100);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.nav-divider {
+  height: 1px;
+  background: var(--gray-100);
+  margin: 8px 12px;
+}
+
+.sidebar-bottom {
+  margin-top: auto;
+  padding: 12px;
+  border-top: 1px solid var(--gray-100);
+}
+
+.alert-box {
+  background: var(--amber-50);
+  border: 1px solid #fec84b;
+  border-radius: var(--r-md);
+  padding: 10px 12px;
+  font-size: 11.5px;
+  color: var(--amber-600);
+  line-height: 1.5;
+}
+
+.alert-box strong { display: block; font-size: 12px; margin-bottom: 2px; }
+
+/* ── Chat main ────────────────────────────────────────────────────────────── */
+.chat-main {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--off-white);
+  border-right: 1px solid var(--gray-100);
+}
+
+/* Session bar */
+.session-bar {
+  background: var(--white);
+  border-bottom: 1px solid var(--gray-100);
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.session-info { font-size: 12px; color: var(--gray-400); }
+.session-id   { font-family: 'Source Code Pro', monospace; font-size: 11px; color: var(--gray-300); }
+
+.btn-new-session {
+  padding: 5px 12px;
+  background: var(--blue-600);
+  color: var(--white);
+  border: none;
+  border-radius: var(--r-sm);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: 'Source Sans 3', sans-serif;
+  transition: background .15s;
+}
+.btn-new-session:hover { background: var(--blue-700); }
+
+/* Messages */
+.messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  scroll-behavior: smooth;
+}
+
+.messages::-webkit-scrollbar { width: 4px; }
+.messages::-webkit-scrollbar-track { background: transparent; }
+.messages::-webkit-scrollbar-thumb { background: var(--gray-200); border-radius: 2px; }
+
+/* Welcome state */
+.welcome-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  gap: 12px;
+  padding: 60px 40px;
+  text-align: center;
+  color: var(--gray-400);
+}
+
+.welcome-icon {
+  width: 56px; height: 56px;
+  background: var(--blue-50);
+  border: 1px solid var(--blue-100);
+  border-radius: var(--r-2xl);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 4px;
+}
+.welcome-icon svg { width: 26px; height: 26px; color: var(--blue-600); }
+
+.welcome-state h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--gray-700);
+  font-weight: 400;
+}
+.welcome-state p { font-size: 14px; max-width: 360px; color: var(--gray-400); line-height: 1.7; }
+
+/* Messages */
+.msg { display: flex; gap: 10px; animation: msgIn .25s ease; }
+.msg.user { flex-direction: row-reverse; align-self: flex-end; max-width: 75%; }
+.msg.bot  { align-self: flex-start; max-width: 85%; }
+
+@keyframes msgIn {
+  from { opacity:0; transform:translateY(6px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+.avatar {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+  font-size: 13px;
+}
+
+.avatar.user {
+  background: var(--gray-100);
+  border: 1px solid var(--gray-200);
+  color: var(--gray-500);
+}
+
+.avatar.bot {
+  background: var(--blue-600);
+  border: 1px solid var(--blue-700);
+  color: white;
+}
+
+.avatar.emergency { background: var(--red-600); border-color: var(--red-600); }
+
+.bubble {
+  padding: 12px 16px;
+  border-radius: var(--r-lg);
+  font-size: 14px;
+  line-height: 1.65;
+  box-shadow: var(--shadow-sm);
+}
+
+.msg.user .bubble {
+  background: var(--blue-600);
+  color: var(--white);
+  border-top-right-radius: var(--r-sm);
+}
+
+.msg.bot .bubble {
+  background: var(--white);
+  border: 1px solid var(--gray-100);
+  color: var(--gray-700);
+  border-top-left-radius: var(--r-sm);
+}
+
+.msg.bot .bubble.emergency {
+  background: var(--red-50);
+  border-color: var(--red-100);
+  color: var(--gray-700);
+}
+
+.bubble p + p { margin-top: 8px; }
+.bubble strong { color: var(--gray-900); font-weight: 600; }
+
+/* Fonte tags */
+.sources-row {
+  display: flex; flex-wrap: wrap; gap: 4px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--gray-100);
+}
+.source-pill {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 10.5px;
+  font-family: 'Source Code Pro', monospace;
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  color: var(--gray-400);
+  padding: 2px 7px;
+  border-radius: 20px;
+}
+
+/* Meta row */
+.meta-row {
+  display: flex; align-items: center; gap: 6px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+.badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  border: 1px solid transparent;
+}
+.badge-consulta   { background: var(--teal-50);  color: var(--teal-600);  border-color: #99f6e0; }
+.badge-emergencia { background: var(--red-50);   color: var(--red-600);   border-color: var(--red-100); }
+.badge-escopo     { background: var(--gray-50);  color: var(--gray-400);  border-color: var(--gray-200); }
+.badge-model      { background: var(--blue-50);  color: var(--blue-700);  border-color: var(--blue-100);
+                    font-weight: 400; font-family: 'Source Code Pro', monospace; font-size: 10.5px; }
+.badge-time       { background: var(--gray-50);  color: var(--gray-400);  border-color: var(--gray-100);
+                    font-weight: 400; font-size: 11px; }
+
+/* Typing */
+.typing-bbl {
+  background: var(--white);
+  border: 1px solid var(--gray-100);
+  border-radius: var(--r-lg);
+  border-top-left-radius: var(--r-sm);
+  padding: 14px 18px;
+  display: flex; align-items: center; gap: 5px;
+  box-shadow: var(--shadow-sm);
+}
+.tdot {
+  width: 6px; height: 6px;
+  background: var(--gray-300);
+  border-radius: 50%;
+  animation: tdot 1.2s infinite;
+}
+.tdot:nth-child(2) { animation-delay:.2s }
+.tdot:nth-child(3) { animation-delay:.4s }
+@keyframes tdot { 0%,80%,100%{transform:scale(1);opacity:.5} 40%{transform:scale(1.3);opacity:1} }
+
+/* Input area */
+.input-zone {
+  padding: 16px 20px 18px;
+  background: var(--white);
+  border-top: 1px solid var(--gray-100);
+  flex-shrink: 0;
+}
+
+.input-card {
+  border: 1px solid var(--gray-200);
+  border-radius: var(--r-xl);
+  background: var(--white);
+  box-shadow: var(--shadow-md);
+  transition: border-color .15s, box-shadow .15s;
+  overflow: hidden;
+}
+.input-card:focus-within {
+  border-color: var(--blue-500);
+  box-shadow: 0 0 0 3px rgba(46,144,250,.12), var(--shadow-md);
+}
+
+.input-row {
+  display: flex; align-items: flex-end;
+  padding: 12px 14px;
+  gap: 10px;
+}
+
+#msgInput {
+  flex: 1;
+  border: none; outline: none;
+  resize: none;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--gray-700);
+  background: transparent;
+  max-height: 130px;
+  min-height: 22px;
+}
+#msgInput::placeholder { color: var(--gray-300); }
+
+#sendBtn {
+  width: 36px; height: 36px;
+  flex-shrink: 0;
+  background: var(--blue-600);
+  border: none;
+  border-radius: var(--r-md);
+  color: white;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .15s, transform .1s;
+}
+#sendBtn:hover  { background: var(--blue-700); }
+#sendBtn:active { transform: scale(.95); }
+#sendBtn:disabled { background: var(--gray-200); color: var(--gray-300); cursor: not-allowed; }
+
+#sendBtn svg { width: 16px; height: 16px; }
+
+.input-footer {
+  padding: 6px 14px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid var(--gray-100);
+}
+
+.input-hint { font-size: 11px; color: var(--gray-300); }
+
+.emer-warning {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 11px; color: var(--red-500);
+}
+
+/* ── Right panel ──────────────────────────────────────────────────────────── */
+.panel-right {
+  background: var(--white);
+  border-left: 1px solid var(--gray-100);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.panel-header {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--gray-100);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.panel-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gray-700);
+}
+
+.panel-tabs {
+  display: flex;
+  gap: 1px;
+  padding: 0 18px;
+  border-bottom: 1px solid var(--gray-100);
+  background: var(--white);
+  flex-shrink: 0;
+}
+
+.ptab {
+  padding: 10px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--gray-400);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all .15s;
+  white-space: nowrap;
+  font-family: 'Source Sans 3', sans-serif;
+  background: none; border-top: none; border-left: none; border-right: none;
+}
+.ptab:hover { color: var(--gray-700); }
+.ptab.active { color: var(--blue-600); border-bottom-color: var(--blue-600); }
+
+.panel-body { flex: 1; overflow-y: auto; padding: 16px 18px; }
+.panel-body::-webkit-scrollbar { width: 3px; }
+.panel-body::-webkit-scrollbar-thumb { background: var(--gray-200); border-radius: 2px; }
+
+/* Info cards in right panel */
+.info-card {
+  border: 1px solid var(--gray-100);
+  border-radius: var(--r-md);
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.info-card-header {
+  padding: 8px 12px;
+  background: var(--gray-50);
+  border-bottom: 1px solid var(--gray-100);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--gray-400);
+  letter-spacing: .5px;
+  text-transform: uppercase;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 7px 12px;
+  border-bottom: 1px solid var(--gray-50);
+  font-size: 12.5px;
+}
+.info-row:last-child { border-bottom: none; }
+.info-key { color: var(--gray-400); }
+.info-val { color: var(--gray-700); font-weight: 500; font-family: 'Source Code Pro', monospace; font-size: 11.5px; }
+.info-val.green { color: var(--green-600); }
+.info-val.blue  { color: var(--blue-600); }
+.info-val.amber { color: var(--amber-600); }
+
+/* Gauge */
+.stat-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.stat-label { font-size: 12px; color: var(--gray-400); min-width: 60px; }
+.stat-bar   { flex: 1; height: 5px; background: var(--gray-100); border-radius: 3px; overflow: hidden; }
+.stat-fill  { height: 100%; border-radius: 3px; transition: width .5s ease; }
+.stat-fill.blue  { background: var(--blue-500); }
+.stat-fill.green { background: var(--green-500); }
+.stat-fill.amber { background: var(--amber-400); }
+.stat-num { font-size: 11px; font-weight: 600; color: var(--gray-700); min-width: 28px; text-align: right; font-family: 'Source Code Pro', monospace; }
+
+/* Log entries */
+.log-entry {
+  padding: 6px 0;
+  border-bottom: 1px solid var(--gray-50);
+  font-size: 11.5px;
+  font-family: 'Source Code Pro', monospace;
+  color: var(--gray-400);
+  line-height: 1.5;
+}
+.log-entry:last-child { border-bottom: none; }
+.log-time { color: var(--gray-300); }
+
+/* Empty state */
+.empty-state { text-align: center; padding: 30px 16px; color: var(--gray-300); font-size: 13px; }
+.empty-icon  { font-size: 28px; margin-bottom: 8px; }
+
+/* ── Config Modal ─────────────────────────────────────────────────────────── */
+.overlay {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.35);
+  backdrop-filter: blur(2px);
+  z-index: 200;
+  align-items: center;
+  justify-content: center;
+}
+.overlay.open { display: flex; }
+
+.modal {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--r-2xl);
+  width: 480px;
+  max-width: 94vw;
+  box-shadow: var(--shadow-xl);
+  animation: modalIn .2s ease;
+  overflow: hidden;
+}
+
+@keyframes modalIn { from{opacity:0;transform:translateY(-12px)} to{opacity:1;transform:translateY(0)} }
+
+.modal-head {
+  padding: 20px 24px 0;
+}
+
+.modal-head h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--gray-900);
+}
+
+.modal-head p { font-size: 13px; color: var(--gray-400); margin-top: 3px; }
+
+.modal-body { padding: 20px 24px; }
+
+.opt-card {
+  border: 1.5px solid var(--gray-200);
+  border-radius: var(--r-lg);
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: all .15s;
+}
+.opt-card:hover  { border-color: var(--blue-300); }
+.opt-card.active { border-color: var(--blue-500); background: var(--blue-50); }
+
+.opt-head {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 13.5px; font-weight: 600; color: var(--gray-700);
+  margin-bottom: 3px;
+}
+.opt-icon { font-size: 18px; }
+.opt-desc { font-size: 12px; color: var(--gray-400); line-height: 1.5; }
+
+.modal-fields { margin-top: 16px; }
+
+.field + .field { margin-top: 12px; }
+
+.field label {
+  display: block; font-size: 12px; font-weight: 500;
+  color: var(--gray-500); margin-bottom: 5px;
+}
+
+.field input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--r-md);
+  font-size: 13px;
+  font-family: 'Source Code Pro', monospace;
+  color: var(--gray-700);
+  background: var(--white);
+  outline: none;
+  transition: border-color .15s, box-shadow .15s;
+}
+.field input:focus {
+  border-color: var(--blue-500);
+  box-shadow: 0 0 0 3px rgba(46,144,250,.1);
+}
+
+.modal-foot {
+  padding: 16px 24px;
+  border-top: 1px solid var(--gray-100);
+  display: flex; justify-content: flex-end; gap: 8px;
+  background: var(--gray-50);
+}
+
+.btn-ghost {
+  padding: 8px 16px;
+  border: 1px solid var(--gray-200);
+  background: var(--white);
+  border-radius: var(--r-md);
+  font-size: 13px; font-weight: 500;
+  color: var(--gray-500);
+  cursor: pointer; font-family: 'Source Sans 3', sans-serif;
+  transition: all .15s;
+}
+.btn-ghost:hover { border-color: var(--gray-300); color: var(--gray-700); }
+
+.btn-primary {
+  padding: 8px 20px;
+  background: var(--blue-600);
+  border: none;
+  border-radius: var(--r-md);
+  font-size: 13px; font-weight: 600;
+  color: white; cursor: pointer;
+  font-family: 'Source Sans 3', sans-serif;
+  transition: background .15s;
+  box-shadow: var(--shadow-xs);
+}
+.btn-primary:hover { background: var(--blue-700); }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ── Topbar ── -->
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+        </svg>
+      </div>
+      <div>
+        <div class="brand-name">MedAssist</div>
+        <div class="brand-tagline">Sistema de Apoio Clínico com IA</div>
+      </div>
+    </div>
+
+    <div class="topbar-divider"></div>
+
+    <div class="status-chips">
+      <span class="chip chip-online"><span class="chip-dot"></span> Sistema Online</span>
+      <span class="chip chip-blue" id="chipBackend">☁ OpenAI</span>
+      <span class="chip chip-gray">MedQuAD PT-BR · 5.274 amostras</span>
+    </div>
+
+    <div class="topbar-center"></div>
+
+    <div class="topbar-actions">
+      <button class="btn-config" onclick="openModal()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.42 1.42M4.93 19.07l1.42-1.42M4.93 4.93l1.42 1.42M19.07 19.07l-1.42-1.42M12 2v2M12 20v2M2 12h2M20 12h2"/></svg>
+        Configurar Backend
+      </button>
+      <button class="btn-icon" onclick="clearChat()" title="Nova conversa">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.54"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- ── Left nav ── -->
+  <aside class="sidebar-left">
+    <div class="nav-section">
+      <div class="nav-label">Perguntas Frequentes</div>
+
+      <button class="nav-item" onclick="quickSend('Quais são os sintomas do diabetes tipo 2?')">
+        <div class="nav-icon">🩸</div>
+        <span>Sintomas do diabetes tipo 2</span>
+      </button>
+      <button class="nav-item" onclick="quickSend('O que causa hipertensão arterial e como prevenir?')">
+        <div class="nav-icon">💓</div>
+        <span>Hipertensão arterial</span>
+      </button>
+      <button class="nav-item" onclick="quickSend('Como funciona a quimioterapia no tratamento do câncer?')">
+        <div class="nav-icon">🔬</div>
+        <span>Quimioterapia</span>
+      </button>
+      <button class="nav-item" onclick="quickSend('Quais são os sintomas de AVC e como agir?')">
+        <div class="nav-icon">🧠</div>
+        <span>Sintomas de AVC</span>
+      </button>
+      <button class="nav-item" onclick="quickSend('O que é leucemia linfoblástica aguda?')">
+        <div class="nav-icon">🧬</div>
+        <span>Leucemia linfoblástica aguda</span>
+      </button>
+      <button class="nav-item" onclick="quickSend('Quais os efeitos colaterais do ibuprofeno?')">
+        <div class="nav-icon">💊</div>
+        <span>Efeitos colaterais do ibuprofeno</span>
+      </button>
+      <button class="nav-item" onclick="quickSend('Como é feito o diagnóstico de pneumonia?')">
+        <div class="nav-icon">🫁</div>
+        <span>Diagnóstico de pneumonia</span>
+      </button>
+    </div>
+
+    <div class="nav-divider"></div>
+
+    <div class="nav-section">
+      <div class="nav-label">Urgência</div>
+      <button class="nav-item" onclick="quickSend('Quais os sinais de infarto do miocárdio?')">
+        <div class="nav-icon">🚨</div>
+        <span>Sinais de infarto</span>
+      </button>
+    </div>
+
+    <div class="sidebar-bottom">
+      <div class="alert-box">
+        <strong>⚠ Aviso Médico</strong>
+        Informativo apenas. Não substitui avaliação de profissional habilitado. Em emergências, ligue <strong>192</strong>.
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── Chat ── -->
+  <main class="chat-main">
+    <div class="session-bar">
+      <div>
+        <span class="session-info">Sessão ativa · </span>
+        <span class="session-id" id="sessionIdDisplay"></span>
+      </div>
+      <button class="btn-new-session" onclick="clearChat()">+ Nova sessão</button>
+    </div>
+
+    <div class="messages" id="messages">
+      <div class="welcome-state" id="welcome">
+        <div class="welcome-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+          </svg>
+        </div>
+        <h3>Como posso ajudar hoje?</h3>
+        <p>Selecione uma pergunta frequente na barra lateral ou digite sua dúvida clínica abaixo. Respostas fundamentadas no MedQuAD PT-BR com 5.274 amostras médicas.</p>
+      </div>
+    </div>
+
+    <div class="input-zone">
+      <div class="input-card">
+        <div class="input-row">
+          <textarea id="msgInput" rows="1" placeholder="Descreva os sintomas ou faça uma pergunta clínica…"
+            onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+          <button id="sendBtn" onclick="sendMessage()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+            </svg>
+          </button>
+        </div>
+        <div class="input-footer">
+          <span class="input-hint">Enter para enviar · Shift+Enter para nova linha</span>
+          <span class="emer-warning">🚨 Emergências: ligue 192</span>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ── Right Panel ── -->
+  <aside class="panel-right">
+    <div class="panel-header">
+      <span class="panel-title">Painel de Detalhes</span>
+    </div>
+
+    <div class="panel-tabs">
+      <button class="ptab active" onclick="showTab('sistema', this)">Sistema</button>
+      <button class="ptab" onclick="showTab('consulta', this)">Última consulta</button>
+      <button class="ptab" onclick="showTab('log', this)">Log</button>
+    </div>
+
+    <div class="panel-body">
+
+      <!-- Tab Sistema -->
+      <div id="tab-sistema">
+        <div class="info-card">
+          <div class="info-card-header">Configuração do Backend</div>
+          <div class="info-row">
+            <span class="info-key">Backend</span>
+            <span class="info-val blue" id="pBackend">openai</span>
+          </div>
+          <div class="info-row">
+            <span class="info-key">Modelo LLM</span>
+            <span class="info-val" id="pModel">gpt-4o-mini</span>
+          </div>
+          <div class="info-row">
+            <span class="info-key">RAG</span>
+            <span class="info-val green">FAISS ativo</span>
+          </div>
+          <div class="info-row">
+            <span class="info-key">Embeddings</span>
+            <span class="info-val">MiniLM-L12</span>
+          </div>
+        </div>
+
+        <div class="info-card">
+          <div class="info-card-header">Dataset</div>
+          <div class="info-row"><span class="info-key">Nome</span><span class="info-val">MedQuAD PT-BR</span></div>
+          <div class="info-row"><span class="info-key">Amostras</span><span class="info-val green">5.274</span></div>
+          <div class="info-row"><span class="info-key">Treino</span><span class="info-val green">4.747</span></div>
+          <div class="info-row"><span class="info-key">Validação</span><span class="info-val green">527</span></div>
+          <div class="info-row"><span class="info-key">Idioma</span><span class="info-val">PT-BR</span></div>
+        </div>
+
+        <div class="info-card">
+          <div class="info-card-header">Fine-tuning (Colab)</div>
+          <div class="info-row"><span class="info-key">Base model</span><span class="info-val">Phi-3-mini 3.8B</span></div>
+          <div class="info-row"><span class="info-key">Técnica</span><span class="info-val">QLoRA 4-bit</span></div>
+          <div class="info-row"><span class="info-key">LoRA rank</span><span class="info-val">r=16 α=32</span></div>
+          <div class="info-row"><span class="info-key">Adaptadores</span><span class="info-val green">28/28 OK</span></div>
+        </div>
+
+        <div class="info-card">
+          <div class="info-card-header">Guardrails</div>
+          <div class="stat-row">
+            <span class="stat-label">Emergência</span>
+            <div class="stat-bar"><div class="stat-fill green" style="width:100%"></div></div>
+            <span class="stat-num green">ON</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">Prescrição</span>
+            <div class="stat-bar"><div class="stat-fill blue" style="width:100%"></div></div>
+            <span class="stat-num blue">ON</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">Disclaimer</span>
+            <div class="stat-bar"><div class="stat-fill green" style="width:100%"></div></div>
+            <span class="stat-num green">ON</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">Logging</span>
+            <div class="stat-bar"><div class="stat-fill green" style="width:100%"></div></div>
+            <span class="stat-num green">ON</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab Última Consulta -->
+      <div id="tab-consulta" style="display:none">
+        <div id="consultaEmpty" class="empty-state">
+          <div class="empty-icon">📋</div>
+          <div>Nenhuma consulta realizada ainda.<br>Faça uma pergunta para ver os detalhes.</div>
+        </div>
+        <div id="consultaData" style="display:none">
+          <div class="info-card">
+            <div class="info-card-header">Resultado</div>
+            <div class="info-row"><span class="info-key">Categoria</span><span class="info-val" id="dCategory">—</span></div>
+            <div class="info-row"><span class="info-key">Backend</span><span class="info-val blue" id="dBackend">—</span></div>
+            <div class="info-row"><span class="info-key">Modelo</span><span class="info-val" id="dModel">—</span></div>
+            <div class="info-row"><span class="info-key">Tempo</span><span class="info-val" id="dTime">—</span></div>
+            <div class="info-row"><span class="info-key">Fontes RAG</span><span class="info-val" id="dSources">—</span></div>
+            <div class="info-row"><span class="info-key">Flags</span><span class="info-val amber" id="dFlags">Nenhum</span></div>
+          </div>
+          <div class="info-card">
+            <div class="info-card-header">Fontes Utilizadas</div>
+            <div id="dSourceList"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab Log -->
+      <div id="tab-log" style="display:none">
+        <div id="logEmpty" class="empty-state">
+          <div class="empty-icon">📄</div>
+          <div>Nenhuma interação registrada.</div>
+        </div>
+        <div id="logEntries"></div>
+      </div>
+
+    </div>
+  </aside>
+</div>
+
+<!-- ── Modal de Backend ── -->
+<div class="overlay" id="overlay" onclick="closeModalOutside(event)">
+  <div class="modal">
+    <div class="modal-head">
+      <h2>Configurar Backend de IA</h2>
+      <p>Escolha como o MedAssist processa as consultas nesta sessão.</p>
+    </div>
+    <div class="modal-body">
+      <div class="opt-card active" id="opt-openai" onclick="selectOpt('openai')">
+        <div class="opt-head"><span class="opt-icon">☁</span> OpenAI API</div>
+        <div class="opt-desc">Usa <strong>gpt-4o-mini</strong> via API da OpenAI. Rápido (~2s) e sem GPU. Requer chave de API.</div>
+      </div>
+      <div class="opt-card" id="opt-ollama" onclick="selectOpt('ollama')">
+        <div class="opt-head"><span class="opt-icon">🦙</span> Ollama — Gemma 3 local</div>
+        <div class="opt-desc">Usa <strong>gemma3:4b</strong> via Ollama rodando localmente. Sem API key, sem custo, funciona offline. Instale o Ollama e rode <code>ollama pull gemma3:4b</code>.</div>
+      </div>
+
+      <div class="modal-fields" id="fields-openai">
+        <div class="field">
+          <label>OPENAI_API_KEY</label>
+          <input type="password" id="f-apikey" placeholder="sk-…" />
+        </div>
+        <div class="field">
+          <label>Modelo</label>
+          <input type="text" id="f-model-openai" value="gpt-4o-mini" />
+        </div>
+      </div>
+      <div class="modal-fields" id="fields-ollama" style="display:none">
+        <div class="field">
+          <label>URL do Ollama</label>
+          <input type="text" id="f-url-ollama" value="http://localhost:11434/v1" />
+        </div>
+        <div class="field">
+          <label>Modelo</label>
+          <input type="text" id="f-model-ollama" value="gemma3:4b" />
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-ghost" onclick="closeModal()">Cancelar</button>
+      <button class="btn-primary" onclick="applyConfig()">Aplicar configuração</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let sessionId   = crypto.randomUUID().slice(0,8);
+let isLoading   = false;
+let selectedOpt = 'openai';
+let msgCount    = 0;
+let logLines    = [];
+
+document.getElementById('sessionIdDisplay').textContent = sessionId;
+
+// ── Info inicial ──────────────────────────────────────────────────────────
+async function loadInfo() {
+  try {
+    const d = await fetch('/api/info').then(r => r.json());
+    const m = d.model || 'gpt-4o-mini';
+    const b = d.backend || 'openai';
+    document.getElementById('pBackend').textContent = b;
+    document.getElementById('pModel').textContent   = m;
+    const modeLabels = {
+      openai: '☁ ' + m,
+      ollama: '🦙 ' + m,
+    };
+    document.getElementById('chipBackend').textContent = modeLabels[d.mode] || '☁ ' + m;
+  } catch(e) {}
+}
+loadInfo();
+
+// ── Send ─────────────────────────────────────────────────────────────────
+async function sendMessage() {
+  const inp  = document.getElementById('msgInput');
+  const text = inp.value.trim();
+  if (!text || isLoading) return;
+
+  document.getElementById('welcome')?.remove();
+  inp.value = '';
+  inp.style.height = 'auto';
+  isLoading = true;
+  document.getElementById('sendBtn').disabled = true;
+  msgCount++;
+
+  appendUserMsg(text);
+  const typing = appendTyping();
+  scrollBottom();
+
+  // Timeout de 5 min para Ollama em CPU
+  const controller = new AbortController();
+  const timeoutId  = setTimeout(() => controller.abort(), 300000);
+
+  try {
+    const res  = await fetch('/api/chat', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ message: text, session_id: sessionId }),
+      signal: controller.signal,
+    });
+    clearTimeout(timeoutId);
+    const data = await res.json();
+    typing.remove();
+
+    if (data.error) {
+      appendBotMsg({ answer: '❌ Erro: ' + data.error, category: 'error' });
+    } else {
+      appendBotMsg(data);
+      updateConsultaTab(data);
+      addLogEntry(text, data);
+    }
+  } catch(e) {
+    clearTimeout(timeoutId);
+    typing.remove();
+    if (e.name === 'AbortError') {
+      appendBotMsg({ answer: '⏱ Timeout após 5 minutos. O Ollama em CPU pode estar sobrecarregado. Tente novamente ou use o backend OpenAI (MODO 1).', category: 'error' });
+    } else {
+      appendBotMsg({ answer: '❌ Não foi possível conectar ao servidor. Verifique se web_app.py está rodando.', category: 'error' });
+    }
+  }
+
+  isLoading = false;
+  document.getElementById('sendBtn').disabled = false;
+  scrollBottom();
+  inp.focus();
+}
+
+function quickSend(t) {
+  document.getElementById('msgInput').value = t;
+  sendMessage();
+}
+
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+}
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 130) + 'px';
+}
+
+// ── Render ────────────────────────────────────────────────────────────────
+function appendUserMsg(text) {
+  const m = document.getElementById('messages');
+  const d = document.createElement('div');
+  d.className = 'msg user';
+  d.innerHTML = `
+    <div class="avatar user">👤</div>
+    <div class="bubble">${escHtml(text)}</div>`;
+  m.appendChild(d);
+}
+
+function appendBotMsg(data) {
+  const m    = document.getElementById('messages');
+  const isEm = data.category === 'emergencia';
+  const d    = document.createElement('div');
+  d.className = 'msg bot';
+
+  const formatted = (data.answer || '')
+    .replace(/\n\n/g, '</p><p>')
+    .replace(/\n/g, '<br>');
+
+  let sourcesHtml = '';
+  if (data.sources && data.sources.filter(s=>s&&s.trim()).length > 0) {
+    const pills = data.sources.filter(s=>s&&s.trim())
+      .map(s => `<span class="source-pill">📄 ${escHtml(s.slice(0,55))}${s.length>55?'…':''}</span>`)
+      .join('');
+    sourcesHtml = `<div class="sources-row">${pills}</div>`;
+  }
+
+  const catMap = { consulta:'Consulta', emergencia:'🚨 Emergência', fora_escopo:'Fora do escopo', error:'Erro' };
+  const catCls = { consulta:'badge-consulta', emergencia:'badge-emergencia', fora_escopo:'badge-escopo', error:'badge-escopo' };
+  let metaHtml = '';
+  if (data.category) {
+    metaHtml += `<span class="badge ${catCls[data.category]||'badge-escopo'}">${catMap[data.category]||data.category}</span>`;
+  }
+  if (data.model) {
+    const isOllama = (data.backend === 'openai' && (data.base_url || '').includes('11434')) ||
+                     document.getElementById('chipBackend').textContent.includes('🦙');
+    metaHtml += `<span class="badge badge-model">${isOllama ? '🦙 ' : '☁ '}${data.model}</span>`;
+  }
+  if (data.elapsed) {
+    metaHtml += `<span class="badge badge-time">⏱ ${data.elapsed}s</span>`;
+  }
+
+  d.innerHTML = `
+    <div class="avatar bot${isEm?' emergency':''}">${isEm?'🚨':'🩺'}</div>
+    <div class="bubble${isEm?' emergency':''}">
+      <p>${formatted}</p>
+      ${sourcesHtml}
+      ${metaHtml ? `<div class="meta-row">${metaHtml}</div>` : ''}
+    </div>`;
+  m.appendChild(d);
+}
+
+function appendTyping() {
+  const m = document.getElementById('messages');
+  const d = document.createElement('div');
+  d.className = 'msg bot';
+
+  // Indica lentidão apenas para Ollama em CPU
+  const backendLabel = document.getElementById('chipBackend');
+  const isOllama = backendLabel && backendLabel.textContent.includes('🦙');
+
+  const hint = isOllama
+    ? `<span style="font-size:11px;color:var(--gray-400);margin-left:8px">Ollama em CPU pode levar alguns segundos…</span>`
+    : '';
+
+  d.innerHTML = `
+    <div class="avatar bot">🩺</div>
+    <div class="typing-bbl">
+      <div class="tdot"></div><div class="tdot"></div><div class="tdot"></div>
+      ${hint}
+    </div>`;
+  m.appendChild(d);
+  return d;
+}
+
+function scrollBottom() {
+  const m = document.getElementById('messages');
+  m.scrollTop = m.scrollHeight;
+}
+
+function clearChat() {
+  const m = document.getElementById('messages');
+  m.innerHTML = '';
+  sessionId = crypto.randomUUID().slice(0,8);
+  document.getElementById('sessionIdDisplay').textContent = sessionId;
+  msgCount = 0;
+  logLines = [];
+  document.getElementById('logEntries').innerHTML = '';
+  document.getElementById('logEmpty').style.display = '';
+  document.getElementById('consultaEmpty').style.display = '';
+  document.getElementById('consultaData').style.display = 'none';
+  const w = document.createElement('div');
+  w.id = 'welcome';
+  w.className = 'welcome-state';
+  w.innerHTML = `
+    <div class="welcome-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+      </svg>
+    </div>
+    <h3>Como posso ajudar hoje?</h3>
+    <p>Selecione uma pergunta frequente na barra lateral ou digite sua dúvida clínica abaixo.</p>`;
+  m.appendChild(w);
+}
+
+// ── Right panel ───────────────────────────────────────────────────────────
+function updateConsultaTab(data) {
+  document.getElementById('consultaEmpty').style.display = 'none';
+  document.getElementById('consultaData').style.display  = '';
+  const catMap = { consulta:'Consulta', emergencia:'Emergência', fora_escopo:'Fora do escopo' };
+  document.getElementById('dCategory').textContent = catMap[data.category] || data.category || '—';
+  document.getElementById('dBackend').textContent  = data.backend || '—';
+  document.getElementById('dModel').textContent    = data.model   || '—';
+  document.getElementById('dTime').textContent     = data.elapsed ? data.elapsed + 's' : '—';
+  document.getElementById('dSources').textContent  = data.sources ? data.sources.filter(s=>s&&s.trim()).length + ' documentos' : '0';
+  document.getElementById('dFlags').textContent    = (data.flags && data.flags.length) ? data.flags.join(', ') : 'Nenhum';
+
+  const sl = document.getElementById('dSourceList');
+  sl.innerHTML = '';
+  (data.sources || []).filter(s=>s&&s.trim()).forEach(s => {
+    const row = document.createElement('div');
+    row.className = 'info-row';
+    row.innerHTML = `<span class="source-pill">📄 ${escHtml(s.slice(0,60))}${s.length>60?'…':''}</span>`;
+    sl.appendChild(row);
+  });
+  if (sl.children.length === 0) sl.innerHTML = '<div class="info-row"><span class="info-key">—</span></div>';
+}
+
+function addLogEntry(question, data) {
+  const now = new Date().toLocaleTimeString('pt-BR');
+  const entry = `<span class="log-time">[${now}]</span> ${escHtml(question.slice(0,40))}${question.length>40?'…':''} → <strong>${data.category||'?'}</strong> (${data.elapsed}s)`;
+  logLines.unshift(entry);
+  if (logLines.length > 50) logLines.pop();
+
+  document.getElementById('logEmpty').style.display = 'none';
+  const le = document.getElementById('logEntries');
+  le.innerHTML = logLines.map(l => `<div class="log-entry">${l}</div>`).join('');
+}
+
+function showTab(name, btn) {
+  ['sistema','consulta','log'].forEach(t => {
+    document.getElementById('tab-'+t).style.display = t === name ? '' : 'none';
+  });
+  document.querySelectorAll('.ptab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// ── Modal ─────────────────────────────────────────────────────────────────
+function openModal() {
+  document.getElementById('overlay').classList.add('open');
+  selectOpt(selectedOpt);
+}
+
+function closeModal() {
+  document.getElementById('overlay').classList.remove('open');
+}
+
+function closeModalOutside(e) {
+  if (e.target === document.getElementById('overlay')) closeModal();
+}
+
+function selectOpt(opt) {
+  selectedOpt = opt;
+  ['openai','ollama'].forEach(o => {
+    document.getElementById('opt-'+o).classList.toggle('active', o === opt);
+    document.getElementById('fields-'+o).style.display = o === opt ? '' : 'none';
+  });
+}
+
+async function applyConfig() {
+  const body = { backend: 'openai' };
+  if (selectedOpt === 'openai') {
+    body.api_key  = document.getElementById('f-apikey').value;
+    body.model    = document.getElementById('f-model-openai').value;
+    body.base_url = '';
+  } else {
+    // ollama
+    body.base_url = document.getElementById('f-url-ollama').value;
+    body.model    = document.getElementById('f-model-ollama').value;
+    body.api_key  = 'ollama';
+  }
+
+  try {
+    const d = await fetch('/api/config', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(body),
+    }).then(r => r.json());
+    const chipLabel = selectedOpt === 'ollama'
+      ? '🦙 ' + d.model
+      : '☁ ' + d.model;
+    document.getElementById('pBackend').textContent    = selectedOpt === 'ollama' ? 'ollama' : 'openai';
+    document.getElementById('pModel').textContent      = d.model;
+    document.getElementById('chipBackend').textContent = chipLabel;
+    closeModal();
+  } catch(e) {
+    alert('Erro ao aplicar: ' + e.message);
+  }
+}
+
+function escHtml(s) {
+  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+</script>
+</body>
+</html>

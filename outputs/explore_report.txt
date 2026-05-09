@@ -1,0 +1,20 @@
+Total de amostras: 5274
+Perguntas - min:3 max:22 avg:8.2
+Respostas - min:5 max:186 avg:84.4
+
+Top palavras:
+  quais: 1614
+  síndrome: 1406
+  (são): 1287
+  tratamentos: 1136
+  quantas: 796
+  pessoas: 796
+  afetadas: 792
+  hereditária?: 529
+  deficiência: 416
+  doença: 405
+  causa: 351
+  herdada?: 349
+  genéticas: 235
+  alterações: 231
+  relacionadas: 231

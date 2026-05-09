@@ -1,0 +1,54 @@
+# MedAssist — Tech Challenge IADT Fase 3
+# Instale com: pip install -r requirements.txt
+#
+# Backends suportados:
+#   MODO 1 — OpenAI API    → OPENAI_API_KEY no .env
+#   MODO 2 — Ollama local  → ollama pull gemma3:4b  (instalação separada)
+#                            https://ollama.com/download
+
+# ─── Interface Web ─────────────────────────────────────────
+fastapi>=0.111.0
+uvicorn>=0.29.0
+
+# ─── LLM — cliente OpenAI-compatible ──────────────────────
+# Usado tanto para a OpenAI API (MODO 1) quanto para o
+# Ollama local via http://localhost:11434/v1 (MODO 2)
+openai>=1.30.0
+
+# ─── LangChain + LangGraph (orquestração) ─────────────────
+langchain>=0.2.0
+langchain-community>=0.2.0
+langchain-core>=0.2.0
+langchain-openai>=0.1.0
+langgraph>=0.1.0
+
+# ─── RAG: Embeddings + Vector Store ───────────────────────
+sentence-transformers>=2.7.0   # embeddings multilíngues (MiniLM-L12)
+langchain-huggingface>=0.0.3   # HuggingFaceEmbeddings no LangChain
+faiss-cpu>=1.8.0               # vector store local
+
+# ─── Variáveis de ambiente ─────────────────────────────────
+python-dotenv>=1.0.0
+
+# ─── Dados e análise ──────────────────────────────────────
+pandas>=2.0.0
+numpy>=1.26.0
+
+# ─── Avaliação (fase5_avaliacao) ──────────────────────────
+rouge-score>=0.1.2
+
+# ─── Utilitários ──────────────────────────────────────────
+tqdm>=4.66.0
+rich>=13.0.0                   # output formatado no terminal
+
+# ─── Dataset MedQuAD — tradução (medquad_dataset/) ────────
+# Necessário apenas para reproduzir o pipeline de dados do zero.
+# Os arquivos já processados (data/medquad_ptbr.jsonl) estão
+# incluídos no repositório — não é obrigatório rodar novamente.
+deep-translator>=1.11.4
+
+# ─── Fine-tuning — Google Colab (fase2_finetuning/) ───────
+# Executado exclusivamente no Colab com GPU T4.
+# O notebook instala tudo automaticamente no ambiente Colab:
+#   unsloth, peft, trl, accelerate, bitsandbytes, transformers
+# NÃO instale essas dependências localmente.

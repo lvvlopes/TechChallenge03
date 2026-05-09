@@ -1,0 +1,22 @@
+============================================================
+  📋 RELATÓRIO DE QUALIDADE DOS DADOS
+============================================================
+
+🚂 Treino:
+   Registros:  4,747
+   Perguntas — min:3 max:20 avg:8.2 palavras
+   Respostas  — min:5 max:186 avg:84.2 palavras
+
+🔬 Validação:
+   Registros:  527
+   Perguntas — min:3 max:22 avg:8.2 palavras
+   Respostas  — min:7 max:179 avg:86.0 palavras
+
+🔄 Data Leakage: 11 amostras sobrepostas
+
+⚠️  Problemas encontrados (1):
+   • AVISO: 11 perguntas do val existem no treino (data leakage).
+
+============================================================
+  ✅ Fase 1.3 — Validação APROVADA!
+============================================================

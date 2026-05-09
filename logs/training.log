@@ -1,0 +1,58 @@
+2026-04-26 21:57:07,112 [INFO] HTTP Request: HEAD https://huggingface.co/gpt2/resolve/main/config.json "HTTP/1.1 200 OK"
+2026-04-26 21:57:07,276 [INFO] HTTP Request: GET https://huggingface.co/gpt2/resolve/main/config.json "HTTP/1.1 200 OK"
+2026-04-26 21:57:07,276 [WARNING] Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+2026-04-26 21:57:07,518 [INFO] HTTP Request: HEAD https://huggingface.co/gpt2/resolve/main/tokenizer_config.json "HTTP/1.1 200 OK"
+2026-04-26 21:57:07,675 [INFO] HTTP Request: GET https://huggingface.co/gpt2/resolve/main/tokenizer_config.json "HTTP/1.1 200 OK"
+2026-04-26 21:57:07,841 [INFO] HTTP Request: GET https://huggingface.co/api/models/gpt2/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 307 Temporary Redirect"
+2026-04-26 21:57:08,008 [INFO] HTTP Request: GET https://huggingface.co/api/models/openai-community/gpt2/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 404 Not Found"
+2026-04-26 21:57:08,157 [INFO] HTTP Request: GET https://huggingface.co/api/models/gpt2/tree/main?recursive=true&expand=false "HTTP/1.1 307 Temporary Redirect"
+2026-04-26 21:57:08,294 [INFO] HTTP Request: GET https://huggingface.co/api/models/openai-community/gpt2/tree/main?recursive=true&expand=false "HTTP/1.1 200 OK"
+2026-04-26 21:57:08,444 [INFO] HTTP Request: HEAD https://huggingface.co/gpt2/resolve/main/vocab.json "HTTP/1.1 200 OK"
+2026-04-26 21:57:08,593 [INFO] HTTP Request: GET https://huggingface.co/gpt2/resolve/main/vocab.json "HTTP/1.1 200 OK"
+2026-04-26 21:57:08,988 [INFO] HTTP Request: HEAD https://huggingface.co/gpt2/resolve/main/merges.txt "HTTP/1.1 200 OK"
+2026-04-26 21:57:09,143 [INFO] HTTP Request: GET https://huggingface.co/gpt2/resolve/main/merges.txt "HTTP/1.1 200 OK"
+2026-04-26 21:57:09,442 [INFO] HTTP Request: HEAD https://huggingface.co/gpt2/resolve/main/added_tokens.json "HTTP/1.1 404 Not Found"
+2026-04-26 21:57:09,593 [INFO] HTTP Request: HEAD https://huggingface.co/gpt2/resolve/main/special_tokens_map.json "HTTP/1.1 404 Not Found"
+2026-04-26 21:57:09,759 [INFO] HTTP Request: HEAD https://huggingface.co/gpt2/resolve/main/tokenizer.json "HTTP/1.1 200 OK"
+2026-04-26 21:57:09,920 [INFO] HTTP Request: GET https://huggingface.co/gpt2/resolve/main/tokenizer.json "HTTP/1.1 200 OK"
+2026-04-26 21:57:10,526 [INFO] HTTP Request: HEAD https://huggingface.co/gpt2/resolve/main/chat_template.jinja "HTTP/1.1 404 Not Found"
+2026-04-26 21:57:10,994 [INFO] HTTP Request: HEAD https://huggingface.co/gpt2/resolve/main/config.json "HTTP/1.1 200 OK"
+2026-04-26 21:57:11,143 [INFO] HTTP Request: HEAD https://huggingface.co/gpt2/resolve/main/adapter_config.json "HTTP/1.1 404 Not Found"
+2026-04-26 21:57:11,325 [INFO] HTTP Request: HEAD https://huggingface.co/gpt2/resolve/main/config.json "HTTP/1.1 200 OK"
+2026-04-26 21:57:11,497 [INFO] HTTP Request: HEAD https://huggingface.co/gpt2/resolve/main/model.safetensors "HTTP/1.1 302 Found"
+2026-04-26 21:57:11,691 [INFO] HTTP Request: GET https://huggingface.co/api/models/openai-community/gpt2/xet-read-token/607a30d783dfa663caf39e06633721c8d4cfcd7e "HTTP/1.1 200 OK"
+2026-04-26 22:25:08,263 [INFO] HTTP Request: HEAD https://huggingface.co/gpt2/resolve/main/config.json "HTTP/1.1 200 OK"
+2026-04-26 22:25:08,263 [WARNING] Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+2026-04-26 22:25:08,436 [INFO] HTTP Request: HEAD https://huggingface.co/gpt2/resolve/main/tokenizer_config.json "HTTP/1.1 200 OK"
+2026-04-26 22:25:08,605 [INFO] HTTP Request: GET https://huggingface.co/api/models/gpt2/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 307 Temporary Redirect"
+2026-04-26 22:25:08,790 [INFO] HTTP Request: GET https://huggingface.co/api/models/openai-community/gpt2/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 404 Not Found"
+2026-04-26 22:25:08,939 [INFO] HTTP Request: GET https://huggingface.co/api/models/gpt2/tree/main?recursive=true&expand=false "HTTP/1.1 307 Temporary Redirect"
+2026-04-26 22:25:09,087 [INFO] HTTP Request: GET https://huggingface.co/api/models/openai-community/gpt2/tree/main?recursive=true&expand=false "HTTP/1.1 200 OK"
+2026-04-26 22:25:09,472 [INFO] HTTP Request: HEAD https://huggingface.co/gpt2/resolve/main/config.json "HTTP/1.1 200 OK"
+2026-04-26 22:25:09,638 [INFO] HTTP Request: HEAD https://huggingface.co/gpt2/resolve/main/config.json "HTTP/1.1 200 OK"
+2026-04-26 22:26:43,281 [INFO] HTTP Request: HEAD https://huggingface.co/gpt2/resolve/main/config.json "HTTP/1.1 200 OK"
+2026-04-26 22:26:43,328 [WARNING] Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+2026-04-26 22:26:43,491 [INFO] HTTP Request: HEAD https://huggingface.co/gpt2/resolve/main/tokenizer_config.json "HTTP/1.1 200 OK"
+2026-04-26 22:26:43,670 [INFO] HTTP Request: GET https://huggingface.co/api/models/gpt2/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 307 Temporary Redirect"
+2026-04-26 22:26:43,811 [INFO] HTTP Request: GET https://huggingface.co/api/models/openai-community/gpt2/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 404 Not Found"
+2026-04-26 22:26:43,948 [INFO] HTTP Request: GET https://huggingface.co/api/models/gpt2/tree/main?recursive=true&expand=false "HTTP/1.1 307 Temporary Redirect"
+2026-04-26 22:26:44,089 [INFO] HTTP Request: GET https://huggingface.co/api/models/openai-community/gpt2/tree/main?recursive=true&expand=false "HTTP/1.1 200 OK"
+2026-04-26 22:26:44,462 [INFO] HTTP Request: HEAD https://huggingface.co/gpt2/resolve/main/config.json "HTTP/1.1 200 OK"
+2026-04-26 22:26:44,636 [INFO] HTTP Request: HEAD https://huggingface.co/gpt2/resolve/main/config.json "HTTP/1.1 200 OK"
+2026-04-26 22:34:44,756 [INFO] GPU disponivel: False
+2026-04-26 22:34:44,762 [WARNING] GPU nao detectada. Executando em modo demonstrativo (CPU).
+2026-04-26 22:34:44,762 [WARNING] Para fine-tuning real, use: MedAssist_FineTuning_Colab.ipynb
+2026-04-26 22:35:10,390 [INFO] Iniciando fine-tuning em modo demonstrativo (CPU, GPT-2)
+2026-04-26 22:35:10,391 [INFO] Para fine-tuning completo, use o Colab: MedAssist_FineTuning_Colab.ipynb
+2026-04-26 22:35:11,027 [INFO] HTTP Request: HEAD https://huggingface.co/gpt2/resolve/main/config.json "HTTP/1.1 200 OK"
+2026-04-26 22:35:11,027 [WARNING] Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+2026-04-26 22:35:11,192 [INFO] HTTP Request: HEAD https://huggingface.co/gpt2/resolve/main/tokenizer_config.json "HTTP/1.1 200 OK"
+2026-04-26 22:35:11,342 [INFO] HTTP Request: GET https://huggingface.co/api/models/gpt2/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 307 Temporary Redirect"
+2026-04-26 22:35:11,476 [INFO] HTTP Request: GET https://huggingface.co/api/models/openai-community/gpt2/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 404 Not Found"
+2026-04-26 22:35:11,626 [INFO] HTTP Request: GET https://huggingface.co/api/models/gpt2/tree/main?recursive=true&expand=false "HTTP/1.1 307 Temporary Redirect"
+2026-04-26 22:35:11,782 [INFO] HTTP Request: GET https://huggingface.co/api/models/openai-community/gpt2/tree/main?recursive=true&expand=false "HTTP/1.1 200 OK"
+2026-04-26 22:35:12,167 [INFO] HTTP Request: HEAD https://huggingface.co/gpt2/resolve/main/config.json "HTTP/1.1 200 OK"
+2026-04-26 22:35:12,333 [INFO] HTTP Request: HEAD https://huggingface.co/gpt2/resolve/main/config.json "HTTP/1.1 200 OK"
+2026-04-27 23:01:47,596 [INFO] GPU disponivel: False
+2026-04-27 23:01:47,596 [WARNING] GPU nao detectada. Executando em modo demonstrativo (CPU).
+2026-04-27 23:01:47,596 [WARNING] Para fine-tuning real, use: MedAssist_FineTuning_Colab.ipynb

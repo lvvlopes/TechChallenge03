@@ -1,0 +1,181 @@
+{
+  "timestamp": "07/05/2026 23:53:18",
+  "model_path": "D:\\Pessoal\\FIAP\\Fase3\\TC3\\medassist\\medassist_projeto\\outputs\\model",
+  "approved": true,
+  "summary": {
+    "total": 28,
+    "ok": 28,
+    "warnings": 0,
+    "failures": 0
+  },
+  "checks": [
+    {
+      "status": "OK",
+      "section": "arquivos",
+      "msg": "adapter_config.json",
+      "detail": "0.0 MB"
+    },
+    {
+      "status": "OK",
+      "section": "arquivos",
+      "msg": "adapter_model.safetensors",
+      "detail": "114.1 MB"
+    },
+    {
+      "status": "OK",
+      "section": "arquivos",
+      "msg": "tokenizer.json",
+      "detail": "3.5 MB"
+    },
+    {
+      "status": "OK",
+      "section": "arquivos",
+      "msg": "tokenizer_config.json",
+      "detail": "0.0 MB"
+    },
+    {
+      "status": "OK",
+      "section": "arquivos",
+      "msg": "tokenizer.model (opcional)",
+      "detail": "0.5 MB"
+    },
+    {
+      "status": "OK",
+      "section": "arquivos",
+      "msg": "chat_template.jinja (opcional)",
+      "detail": "0.0 MB"
+    },
+    {
+      "status": "OK",
+      "section": "arquivos",
+      "msg": "README.md (opcional)",
+      "detail": "0.0 MB"
+    },
+    {
+      "status": "OK",
+      "section": "config",
+      "msg": "peft_type",
+      "detail": "LORA"
+    },
+    {
+      "status": "OK",
+      "section": "config",
+      "msg": "task_type",
+      "detail": "CAUSAL_LM"
+    },
+    {
+      "status": "OK",
+      "section": "config",
+      "msg": "lora rank (r)",
+      "detail": "16"
+    },
+    {
+      "status": "OK",
+      "section": "config",
+      "msg": "lora_alpha",
+      "detail": "32"
+    },
+    {
+      "status": "OK",
+      "section": "config",
+      "msg": "target_modules",
+      "detail": "down_proj, gate_proj, k_proj, o_proj, q_proj, up_proj, v_proj"
+    },
+    {
+      "status": "OK",
+      "section": "config",
+      "msg": "inference_mode = True (pronto para uso)",
+      "detail": ""
+    },
+    {
+      "status": "OK",
+      "section": "config",
+      "msg": "base_model_name_or_path",
+      "detail": "microsoft/Phi-3-mini-4k-instruct"
+    },
+    {
+      "status": "OK",
+      "section": "safetensors",
+      "msg": "Tamanho do arquivo",
+      "detail": "114.1 MB"
+    },
+    {
+      "status": "OK",
+      "section": "safetensors",
+      "msg": "Numero de tensores LoRA",
+      "detail": "448"
+    },
+    {
+      "status": "OK",
+      "section": "safetensors",
+      "msg": "Prefixo dos tensores correto",
+      "detail": "base_model.model"
+    },
+    {
+      "status": "OK",
+      "section": "safetensors",
+      "msg": "Pares lora_A/lora_B balanceados",
+      "detail": "224 pares"
+    },
+    {
+      "status": "OK",
+      "section": "safetensors",
+      "msg": "Todos os target_modules presentes nos pesos",
+      "detail": "down_proj, gate_proj, k_proj, o_proj, q_proj, up_proj, v_proj"
+    },
+    {
+      "status": "OK",
+      "section": "safetensors",
+      "msg": "Formato dos pesos",
+      "detail": "pt (PyTorch)"
+    },
+    {
+      "status": "OK",
+      "section": "tokenizer",
+      "msg": "tokenizer.json valido",
+      "detail": "vocabulario: 32,000 tokens"
+    },
+    {
+      "status": "OK",
+      "section": "tokenizer",
+      "msg": "eos_token definido",
+      "detail": "'<|endoftext|>'"
+    },
+    {
+      "status": "OK",
+      "section": "tokenizer",
+      "msg": "bos_token definido",
+      "detail": "'<s>'"
+    },
+    {
+      "status": "OK",
+      "section": "tokenizer",
+      "msg": "pad_token definido",
+      "detail": "'<|placeholder6|>'"
+    },
+    {
+      "status": "OK",
+      "section": "tokenizer",
+      "msg": "tokenizer.model (sentencepiece)",
+      "detail": "488 KB"
+    },
+    {
+      "status": "OK",
+      "section": "chat_template",
+      "msg": "chat_template.jinja valido",
+      "detail": "407 chars — tokens user/assistant presentes"
+    },
+    {
+      "status": "OK",
+      "section": "consistencia",
+      "msg": "target_modules batem entre config e pesos",
+      "detail": ""
+    },
+    {
+      "status": "OK",
+      "section": "consistencia",
+      "msg": "inference_mode=True — adaptadores prontos para inferencia",
+      "detail": ""
+    }
+  ]
+}

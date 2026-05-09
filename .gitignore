@@ -1,0 +1,23 @@
+# Variáveis de ambiente (contém chaves secretas)
+.env
+
+# Cache Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Ambiente virtual
+venv/
+.venv/
+
+# Adaptador LoRA — arquivo grande (114 MB), não sobe no Git
+# Publique o ZIP: outputs/model/adapter_model.safetensors.zip
+# Quem clonar deve descompactar o ZIP nesta mesma pasta
+outputs/model/adapter_model.safetensors
+
+# Outputs grandes
+outputs/vectorstore/
+outputs/offload/
+
+# Logs (opcional)
+# logs/
