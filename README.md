@@ -132,43 +132,38 @@ cp .env.example .env
 # Edite o .env escolhendo MODO 1, MODO 2 ou MODO 3 (ver próxima seção)
 ```
 
-### 5. Baixar os arquivos grandes do Google Drive
+### 5. Descompactar os adaptadores LoRA
 
-Dois arquivos são grandes demais para o Git e estão disponíveis via **Google Drive**:
-
-| Arquivo | Tamanho | Necessário para |
-|---|---|---|
-| `outputs/model/adapter_model.safetensors` | ~114 MB | Todos os modos (validação do fine-tuning) |
-| `outputs/gguf/phi-3-mini-4k-instruct.Q4_K_M.gguf` | ~2.2 GB | Apenas MODO 3 — Phi-3-mini fine-tunado |
-
-> 📁 **Link do Google Drive:** `[link será disponibilizado pelo autor]`
-
-#### Arquivo 1 — Adaptadores LoRA (`adapter_model.safetensors`)
-
-1. Baixe o arquivo do Google Drive
-2. Coloque em `outputs/model/`:
+O arquivo `adapter_model.safetensors` (114 MB) é grande demais para o Git e **não é versionado diretamente**. Ele é publicado compactado no repositório:
 
 ```
+outputs/model/adapter_model.safetensors.zip
+```
+
+Descompacte-o na mesma pasta antes de rodar:
+
+**Windows (Explorer):** clique com o botão direito no ZIP → Extrair aqui
+
+**Windows (PowerShell):**
+```powershell
+Expand-Archive outputs\model\adapter_model.safetensors.zip -DestinationPath outputs\model\
+```
+
+**Mac/Linux:**
+```bash
+unzip outputs/model/adapter_model.safetensors.zip -d outputs/model/
+```
+
+Resultado esperado após descompactar:
+```
 outputs/model/
-├── adapter_model.safetensors   ← baixado do Drive (114 MB)
+├── adapter_model.safetensors   ← gerado pelo unzip (114 MB)
+├── adapter_model.safetensors.zip
 ├── adapter_config.json
 ├── tokenizer.json
 ├── tokenizer.model
 └── chat_template.jinja
 ```
-
-#### Arquivo 2 — GGUF do Phi-3-mini fine-tunado — apenas MODO 3
-
-1. Baixe o arquivo `phi-3-mini-4k-instruct.Q4_K_M.gguf` do Google Drive
-2. Coloque em `outputs/gguf/`:
-
-```
-outputs/gguf/
-├── phi-3-mini-4k-instruct.Q4_K_M.gguf   ← baixado do Drive (~2.2 GB)
-└── Modelfile
-```
-
-> ⚠️ O arquivo `.gguf` só é necessário para o **MODO 3**. Para MODOs 1 e 2 pode ignorar.
 
 ### 6. Verificar adaptadores LoRA
 
@@ -276,7 +271,7 @@ Colab: Phi-3-mini + LoRA → fusão → GGUF quantizado (q4_k_m ~2.2 GB)
 
 Abra o notebook `fase2_finetuning/MedAssist_FineTuning_Colab.ipynb` e execute as células **após o treinamento**:
 
-- **Célula 12b** — funde LoRA + modelo base e exporta `phi-3-mini-4k-instruct.Q4_K_M.gguf` (~2.2 GB)
+- **Célula 12b** — funde LoRA + modelo base e exporta `phi3-medassist-Q4_K_M.gguf` (~2.2 GB)
 - **Célula 12c** — faz o download do arquivo para sua máquina
 
 > O Colab precisa estar com GPU T4 ativa para fazer a fusão. Após isso, o GGUF roda localmente sem GPU.
@@ -286,13 +281,13 @@ Abra o notebook `fase2_finetuning/MedAssist_FineTuning_Colab.ipynb` e execute as
 **Windows (PowerShell):**
 ```powershell
 mkdir outputs\gguf
-move $env:USERPROFILE\Downloads\phi-3-mini-4k-instruct.Q4_K_M.gguf outputs\gguf\phi3-medassist.gguf
+move $env:USERPROFILE\Downloads\phi3-medassist-Q4_K_M.gguf outputs\gguf\phi3-medassist.gguf
 ```
 
 **Mac/Linux:**
 ```bash
 mkdir -p outputs/gguf
-mv ~/Downloads/phi-3-mini-4k-instruct.Q4_K_M.gguf outputs/gguf/phi3-medassist.gguf
+mv ~/Downloads/phi3-medassist-Q4_K_M.gguf outputs/gguf/phi3-medassist.gguf
 ```
 
 #### Passo 3.3 — Criar o Modelfile
@@ -304,7 +299,7 @@ FROM ./phi3-medassist.gguf
 
 SYSTEM "Você é um assistente médico especializado. Responda de forma precisa, clara e em português. Sempre recomende consulta com profissional de saúde para diagnósticos e tratamentos."
 
-PARAMETER temperature 0.3
+PARAMETER temperature 0.3cd
 PARAMETER num_ctx 2048
 "@ | Out-File -Encoding utf8 outputs\gguf\Modelfile
 
@@ -377,7 +372,7 @@ No notebook `fase2_finetuning/MedAssist_FineTuning_Colab.ipynb`:
 
 ```bash
 mkdir -p outputs/gguf
-mv ~/Downloads/phi-3-mini-4k-instruct.Q4_K_M.gguf outputs/gguf/phi3-medassist.gguf
+mv ~/Downloads/phi3-medassist-*.gguf outputs/gguf/phi3-medassist.gguf
 ```
 
 #### Passo 3.3 — Criar o Modelfile
@@ -498,10 +493,11 @@ medassist/
 │
 ├── outputs/
 │   ├── gguf/                    # MODO 3: modelo GGUF + Modelfile (gerado no Colab)
-│   │   ├── phi-3-mini-4k-instruct.Q4_K_M.gguf  ← baixar do Google Drive (~2.2 GB)
+│   │   ├── phi3-medassist.gguf  ← baixado do Colab (~2.2 GB, não versionado)
 │   │   └── Modelfile            ← config do Ollama para o modelo fine-tunado
 │   ├── model/                   # Adaptadores LoRA do fine-tuning
-│   │   ├── adapter_model.safetensors      ← baixar do Google Drive (114 MB)
+│   │   ├── adapter_model.safetensors.zip  ← publicado no Git (114 MB compactado)
+│   │   ├── adapter_model.safetensors      ← gerado após descompactar o ZIP
 │   │   ├── adapter_config.json
 │   │   ├── tokenizer.json
 │   │   ├── tokenizer.model
@@ -656,8 +652,9 @@ python fase3_langchain/chains.py
 **Adaptadores LoRA não encontrados**
 ```
 outputs/model/adapter_model.safetensors não existe?
-→ Baixe do Google Drive e coloque em outputs/model/
-   Link: [link será disponibilizado pelo autor]
+→ Descompacte o ZIP: outputs/model/adapter_model.safetensors.zip
+   PowerShell: Expand-Archive outputs\model\adapter_model.safetensors.zip -DestinationPath outputs\model\
+   Mac/Linux:  unzip outputs/model/adapter_model.safetensors.zip -d outputs/model/
 ```
 
 ---
