@@ -60,15 +60,19 @@ def _generate_openai(question: str, context: str) -> str:
 
     if context:
         user_msg = (
-            f"Use o contexto abaixo (extraido do MedQuAD) para responder a pergunta.\n\n"
-            f"Contexto:\n{context}\n\n"
-            f"Pergunta: {question}"
+            f"Pergunta do usuário: {question}\n\n"
+            f"---\n"
+            f"Informações de referência extraídas da base MedQuAD "
+            f"(use apenas como contexto de apoio, responda à pergunta do usuário acima):\n\n"
+            f"{context}\n"
+            f"---\n\n"
+            f"Responda à pergunta do usuário em português, de forma clara e objetiva."
         )
     else:
         user_msg = (
-            f"Nao encontrei informacoes especificas na base MedQuAD. "
-            f"Responda com seu conhecimento medico geral e recomende consulta profissional.\n\n"
-            f"Pergunta: {question}"
+            f"Pergunta do usuário: {question}\n\n"
+            f"Não encontrei informações específicas na base MedQuAD. "
+            f"Responda com seu conhecimento médico geral e recomende consulta profissional."
         )
 
     response = client.chat.completions.create(
@@ -171,9 +175,14 @@ def _generate_local(question: str, context: str) -> str:
     model, tokenizer = _load_local_model()
 
     user_content = (
-        f"Use o contexto abaixo para responder.\n\nContexto:\n{context}\n\nPergunta: {question}"
+        f"Pergunta do usuário: {question}\n\n"
+        f"---\n"
+        f"Informações de referência (base MedQuAD):\n{context}\n"
+        f"---\n\n"
+        f"Responda à pergunta do usuário em português."
         if context else
-        f"Responda com conhecimento medico geral.\n\nPergunta: {question}"
+        f"Pergunta do usuário: {question}\n\n"
+        f"Responda com conhecimento médico geral em português."
     )
 
     messages = [

@@ -1,7 +1,7 @@
 # MedAssist — Assistente Médico Inteligente com IA
 ### Tech Challenge IADT — Fase 3 | POSTECH / FIAP
 
-Assistente virtual médico com **fine-tuning real de LLM** (Phi-3-mini + QLoRA, Google Colab T4), **RAG sobre MedQuAD PT-BR** (5.274 amostras), orquestração via **LangChain + LangGraph**, guardrails de segurança clínica e interface web profissional com dois backends de inferência configuráveis.
+Assistente virtual médico com **fine-tuning real de LLM** (Phi-3-mini + QLoRA, Google Colab T4), **RAG sobre MedQuAD PT-BR** (5.274 amostras), orquestração via **LangChain + LangGraph**, guardrails de segurança clínica e interface web profissional com **três backends de inferência** configuráveis.
 
 ---
 
@@ -12,6 +12,9 @@ Assistente virtual médico com **fine-tuning real de LLM** (Phi-3-mini + QLoRA, 
 3. [Pré-requisitos](#pré-requisitos)
 4. [Instalação passo a passo](#instalação-passo-a-passo)
 5. [Configuração do Backend](#configuração-do-backend)
+   - [MODO 1 — OpenAI API](#modo-1--openai-api)
+   - [MODO 2 — Ollama + Gemma 3](#modo-2--ollama--gemma-3-local-gemma34b)
+   - [MODO 3 — Phi-3-mini fine-tunado](#modo-3--phi-3-mini-fine-tunado-via-ollama-sem-gpu)
 6. [Rodando o projeto](#rodando-o-projeto)
 7. [Estrutura do projeto](#estrutura-do-projeto)
 8. [Fine-tuning no Google Colab](#fine-tuning-no-google-colab)
@@ -34,7 +37,7 @@ O MedAssist foi desenvolvido para o Tech Challenge Fase 3 da POSTECH/FIAP. O des
 | Dados de treino | MedQuAD PT-BR — 5.274 pares médicos Q&A |
 | RAG (Retrieval) | FAISS + sentence-transformers (MiniLM-L12) |
 | Orquestração | LangChain + LangGraph |
-| Backend de inferência | OpenAI API **ou** Ollama (Gemma 3 local) |
+| Backend de inferência | OpenAI API **ou** Ollama gemma3:4b **ou** Phi-3-mini fine-tunado (GGUF) |
 | Segurança | Safety Guard, Logging/Audit, Explainability |
 | Interface | FastAPI + HTML/CSS/JS (porta 8080) |
 
@@ -62,10 +65,10 @@ O MedAssist foi desenvolvido para o Tech Challenge Fase 3 da POSTECH/FIAP. O des
                    │
        ┌───────────▼─────────────┐
        │      llm_backend.py      │
-       │  ┌──────────┬─────────┐ │
-       │  │ OpenAI   │  Ollama │ │
-       │  │   API    │ gemma3  │ │
-       │  └──────────┴─────────┘ │
+       │  ┌──────────┬──────────┬────────────┐ │
+       │  │ OpenAI   │  Ollama  │  Ollama    │ │
+       │  │   API    │ gemma3:4b│phi3-medass.│ │
+       │  └──────────┴──────────┴────────────┘ │
        └───────────┬──────────────┘
                    │
        ┌───────────▼─────────────┐
@@ -83,8 +86,10 @@ O MedAssist foi desenvolvido para o Tech Challenge Fase 3 da POSTECH/FIAP. O des
 - **Git**
 - Para MODO 1: Chave de API da OpenAI
 - Para MODO 2: ~4 GB de espaço livre + Ollama instalado
+- Para MODO 3: Exportar GGUF no Colab (Célula 12b/12c) + Ollama instalado + `ollama pull gemma3:4b`
+- Para MODO 3: arquivo `phi3-medassist.gguf` exportado do Colab (Células 12b/12c) + Ollama instalado
 
-> **Nota sobre GPU:** O fine-tuning foi realizado no Google Colab com GPU T4. Para inferência, ambos os modos funcionam **sem GPU** — OpenAI API roda na nuvem e Ollama pode rodar em CPU (mais lento).
+> **Nota sobre GPU:** O fine-tuning foi realizado no Google Colab com GPU T4. Para inferência, os três modos funcionam **sem GPU** — o MODO 3 usa o próprio modelo treinado convertido para GGUF e rodado pelo Ollama em CPU.
 
 ---
 
@@ -124,41 +129,46 @@ pip install -r requirements.txt
 
 ```bash
 cp .env.example .env
-# Edite o .env escolhendo MODO 1 ou MODO 2 (ver próxima seção)
+# Edite o .env escolhendo MODO 1, MODO 2 ou MODO 3 (ver próxima seção)
 ```
 
-### 5. Descompactar os adaptadores LoRA
+### 5. Baixar os arquivos grandes do Google Drive
 
-O arquivo `adapter_model.safetensors` (114 MB) é grande demais para o Git e **não é versionado diretamente**. Ele é publicado compactado no repositório:
+Dois arquivos são grandes demais para o Git e estão disponíveis via **Google Drive**:
 
-```
-outputs/model/adapter_model.safetensors.zip
-```
+| Arquivo | Tamanho | Necessário para |
+|---|---|---|
+| `outputs/model/adapter_model.safetensors` | ~114 MB | Todos os modos (validação do fine-tuning) |
+| `outputs/gguf/phi-3-mini-4k-instruct.Q4_K_M.gguf` | ~2.2 GB | Apenas MODO 3 — Phi-3-mini fine-tunado |
 
-Descompacte-o na mesma pasta antes de rodar:
+> 📁 **Link do Google Drive:** `[link será disponibilizado pelo autor]`
 
-**Windows (Explorer):** clique com o botão direito no ZIP → Extrair aqui
+#### Arquivo 1 — Adaptadores LoRA (`adapter_model.safetensors`)
 
-**Windows (PowerShell):**
-```powershell
-Expand-Archive outputs\model\adapter_model.safetensors.zip -DestinationPath outputs\model\
-```
+1. Baixe o arquivo do Google Drive
+2. Coloque em `outputs/model/`:
 
-**Mac/Linux:**
-```bash
-unzip outputs/model/adapter_model.safetensors.zip -d outputs/model/
-```
-
-Resultado esperado após descompactar:
 ```
 outputs/model/
-├── adapter_model.safetensors   ← gerado pelo unzip (114 MB)
-├── adapter_model.safetensors.zip
+├── adapter_model.safetensors   ← baixado do Drive (114 MB)
 ├── adapter_config.json
 ├── tokenizer.json
 ├── tokenizer.model
 └── chat_template.jinja
 ```
+
+#### Arquivo 2 — GGUF do Phi-3-mini fine-tunado — apenas MODO 3
+
+1. Baixe o arquivo `phi-3-mini-4k-instruct.Q4_K_M.gguf` do Google Drive
+2. Coloque em `outputs/gguf/`:
+
+```
+outputs/gguf/
+├── phi-3-mini-4k-instruct.Q4_K_M.gguf   ← baixado do Drive (~2.2 GB)
+└── Modelfile
+```
+
+> ⚠️ O arquivo `.gguf` só é necessário para o **MODO 3**. Para MODOs 1 e 2 pode ignorar.
 
 ### 6. Verificar adaptadores LoRA
 
@@ -246,12 +256,179 @@ OPENAI_MODEL=gemma3:4b
 
 ---
 
+### MODO 3 — Phi-3-mini fine-tunado via Ollama (sem GPU)
+
+**Usa o seu próprio modelo treinado no Colab, convertido para GGUF e registrado no Ollama. Sem API key. Sem GPU. Funciona offline. Máxima especialização médica.**
+
+Este é o modo que conecta o fine-tuning diretamente à inferência local.
+
+#### Como funciona
+
+```
+Colab: Phi-3-mini + LoRA → fusão → GGUF quantizado (q4_k_m ~2.2 GB)
+                                          ↓
+                              ollama create phi3-medassist
+                                          ↓
+                         http://localhost:11434/v1  ←  web_app.py
+```
+
+#### Passo 3.1 — Exportar o GGUF no Colab
+
+Abra o notebook `fase2_finetuning/MedAssist_FineTuning_Colab.ipynb` e execute as células **após o treinamento**:
+
+- **Célula 12b** — funde LoRA + modelo base e exporta `phi-3-mini-4k-instruct.Q4_K_M.gguf` (~2.2 GB)
+- **Célula 12c** — faz o download do arquivo para sua máquina
+
+> O Colab precisa estar com GPU T4 ativa para fazer a fusão. Após isso, o GGUF roda localmente sem GPU.
+
+#### Passo 3.2 — Mover o arquivo para o projeto
+
+**Windows (PowerShell):**
+```powershell
+mkdir outputs\gguf
+move $env:USERPROFILE\Downloads\phi-3-mini-4k-instruct.Q4_K_M.gguf outputs\gguf\phi3-medassist.gguf
+```
+
+**Mac/Linux:**
+```bash
+mkdir -p outputs/gguf
+mv ~/Downloads/phi-3-mini-4k-instruct.Q4_K_M.gguf outputs/gguf/phi3-medassist.gguf
+```
+
+#### Passo 3.3 — Criar o Modelfile
+
+```bash
+# Windows (PowerShell):
+@"
+FROM ./phi3-medassist.gguf
+
+SYSTEM "Você é um assistente médico especializado. Responda de forma precisa, clara e em português. Sempre recomende consulta com profissional de saúde para diagnósticos e tratamentos."
+
+PARAMETER temperature 0.3
+PARAMETER num_ctx 2048
+"@ | Out-File -Encoding utf8 outputs\gguf\Modelfile
+
+# Mac/Linux:
+cat > outputs/gguf/Modelfile << 'EOF'
+FROM ./phi3-medassist.gguf
+
+SYSTEM "Você é um assistente médico especializado. Responda de forma precisa, clara e em português. Sempre recomende consulta com profissional de saúde para diagnósticos e tratamentos."
+
+PARAMETER temperature 0.3
+PARAMETER num_ctx 2048
+EOF
+```
+
+#### Passo 3.4 — Registrar no Ollama
+
+```bash
+cd outputs/gguf
+ollama create phi3-medassist -f Modelfile
+# Aguarde 1-2 minutos
+
+# Verificar
+ollama list
+# Deve aparecer: phi3-medassist
+
+# Testar diretamente
+ollama run phi3-medassist "Quais são os sintomas do diabetes tipo 2?"
+```
+
+#### Passo 3.5 — Configurar o .env
+
+```env
+LLM_BACKEND=openai
+OPENAI_BASE_URL=http://localhost:11434/v1
+OPENAI_API_KEY=ollama
+OPENAI_MODEL=phi3-medassist
+```
+
+Ou selecione **MODO 3 — Phi-3-mini fine-tunado** no modal "Configurar Backend" da interface web.
+
+---
+
+### Comparativo dos três modos
+
+| | MODO 1 | MODO 2 | MODO 3 |
+|---|---|---|---|
+| Modelo | gpt-4o-mini | gemma3:4b | **phi3-medassist** |
+| Fine-tuning médico | Não | Não | **Sim (seu Colab)** |
+| GPU necessária | Não | Não | Não |
+| API key | Sim | Não | Não |
+| Funciona offline | Não | Sim | Sim |
+| Tamanho do modelo | — (nuvem) | ~3.3 GB | ~2.2 GB |
+| Velocidade (CPU) | ~2s | ~15-30s | ~20-40s |
+
+---
+
+### MODO 3 — Phi-3-mini fine-tunado via Ollama (sem GPU)
+
+**O modelo treinado no Colab rodando localmente. Sem GPU. Sem API key. Máxima especialização médica.**
+
+Este modo usa o **mesmo modelo fine-tunado no Colab** (Phi-3-mini + QLoRA), convertido para GGUF e registrado no Ollama. É a única forma de rodar seus adaptadores LoRA sem GPU.
+
+#### Passo 3.1 — Exportar o GGUF no Colab
+
+No notebook `fase2_finetuning/MedAssist_FineTuning_Colab.ipynb`:
+- Execute a **Célula 12b** → funde LoRA + modelo base e exporta GGUF (~2.2 GB)
+- Execute a **Célula 12c** → baixa o arquivo `.gguf`
+
+#### Passo 3.2 — Mover o arquivo para o projeto
+
+```bash
+mkdir -p outputs/gguf
+mv ~/Downloads/phi-3-mini-4k-instruct.Q4_K_M.gguf outputs/gguf/phi3-medassist.gguf
+```
+
+#### Passo 3.3 — Criar o Modelfile
+
+```bash
+cat > outputs/gguf/Modelfile << 'EOF'
+FROM ./phi3-medassist.gguf
+
+SYSTEM "Você é um assistente médico especializado. Responda de forma precisa, clara e em português. Sempre recomende consulta com profissional de saúde."
+
+PARAMETER temperature 0.3
+PARAMETER num_ctx 2048
+EOF
+```
+
+#### Passo 3.4 — Registrar no Ollama
+
+```bash
+cd outputs/gguf
+ollama create phi3-medassist -f Modelfile
+
+# Verificar:
+ollama list   # phi3-medassist deve aparecer
+```
+
+#### Passo 3.5 — Configurar o .env
+
+```env
+LLM_BACKEND=openai
+OPENAI_BASE_URL=http://localhost:11434/v1
+OPENAI_API_KEY=ollama
+OPENAI_MODEL=phi3-medassist
+```
+
+> **Comparativo dos três modos:**
+>
+> | Modo | Modelo | Especialização | GPU | Custo |
+> |---|---|---|---|---|
+> | MODO 1 | gpt-4o-mini | Geral + RAG | Não | Por token |
+> | MODO 2 | gemma3:4b | Geral + RAG | Não | Gratuito |
+> | **MODO 3** | **phi3-medassist** | **Fine-tuned + RAG** | **Não** | **Gratuito** |
+
+
+---
+
 ### Trocar o backend pela interface web (sem reiniciar)
 
 1. Abrir **http://localhost:8080**
 2. Clicar em **"Configurar Backend"** no header
-3. Preencher URL, modelo e API key
-4. Clicar em **"Aplicar configuração"**
+3. Escolher **MODO 1** (OpenAI), **MODO 2** (Ollama gemma3:4b) ou **MODO 3** (Phi-3-mini fine-tunado)
+4. Preencher os campos e clicar em **"Aplicar configuração"**
 
 ---
 
@@ -304,7 +481,7 @@ medassist/
 ├── utils.py                     # Utilitários gerais
 ├── local_server.py              # Servidor Phi-3-mini OpenAI-compatible (GPU)
 ├── requirements.txt             # Dependências Python
-├── .env.example                 # Template — MODO 1 (OpenAI) e MODO 2 (Ollama)
+├── .env.example                 # Template — MODO 1 (OpenAI), MODO 2 (Ollama) e MODO 3 (phi3-medassist)
 │
 ├── data/
 │   ├── medquad_ptbr.jsonl       # 5.274 pares médicos Q&A em PT-BR
@@ -320,9 +497,11 @@ medassist/
 │   └── medquad_ptbr.jsonl       # Dataset traduzido PT-BR (5.274 pares)
 │
 ├── outputs/
+│   ├── gguf/                    # MODO 3: modelo GGUF + Modelfile (gerado no Colab)
+│   │   ├── phi-3-mini-4k-instruct.Q4_K_M.gguf  ← baixar do Google Drive (~2.2 GB)
+│   │   └── Modelfile            ← config do Ollama para o modelo fine-tunado
 │   ├── model/                   # Adaptadores LoRA do fine-tuning
-│   │   ├── adapter_model.safetensors.zip  ← publicado no Git (114 MB compactado)
-│   │   ├── adapter_model.safetensors      ← gerado após descompactar o ZIP
+│   │   ├── adapter_model.safetensors      ← baixar do Google Drive (114 MB)
 │   │   ├── adapter_config.json
 │   │   ├── tokenizer.json
 │   │   ├── tokenizer.model
@@ -361,7 +540,7 @@ medassist/
 │
 ├── README.md                    # Este arquivo
 ├── CHECKLIST.md                 # Checklist alinhado ao TC Fase 3
-└── OLLAMA_SETUP.md              # Guia completo do MODO 2 (Ollama)
+└── OLLAMA_SETUP.md              # Guia completo do MODO 2 e MODO 3 (Ollama)
 ```
 
 ---
@@ -454,7 +633,19 @@ cp .env.example .env  # depois edite o .env
 **Ollama não responde**
 ```bash
 ollama serve          # Linux: inicia o servidor
-ollama list           # verifica se gemma3:4b está baixado
+ollama list           # verifica modelos baixados
+                      # MODO 2: deve aparecer gemma3:4b
+                      # MODO 3: deve aparecer phi3-medassist
+```
+
+**MODO 3 — phi3-medassist não aparece no `ollama list`**
+```bash
+# Registre o modelo a partir do GGUF exportado do Colab:
+cd outputs/gguf
+ollama create phi3-medassist -f Modelfile
+
+# Se ainda não tiver o .gguf, exporte no Colab:
+# Abra MedAssist_FineTuning_Colab.ipynb → execute Células 12b e 12c
 ```
 
 **Vector store não encontrado**
@@ -465,9 +656,8 @@ python fase3_langchain/chains.py
 **Adaptadores LoRA não encontrados**
 ```
 outputs/model/adapter_model.safetensors não existe?
-→ Descompacte o ZIP: outputs/model/adapter_model.safetensors.zip
-   PowerShell: Expand-Archive outputs\model\adapter_model.safetensors.zip -DestinationPath outputs\model\
-   Mac/Linux:  unzip outputs/model/adapter_model.safetensors.zip -d outputs/model/
+→ Baixe do Google Drive e coloque em outputs/model/
+   Link: [link será disponibilizado pelo autor]
 ```
 
 ---

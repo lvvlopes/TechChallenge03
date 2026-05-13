@@ -1054,6 +1054,10 @@ html, body {
         <div class="opt-head"><span class="opt-icon">🦙</span> Ollama — Gemma 3 local</div>
         <div class="opt-desc">Usa <strong>gemma3:4b</strong> via Ollama rodando localmente. Sem API key, sem custo, funciona offline. Instale o Ollama e rode <code>ollama pull gemma3:4b</code>.</div>
       </div>
+      <div class="opt-card" id="opt-modo3" onclick="selectOpt('modo3')">
+        <div class="opt-head"><span class="opt-icon">🧬</span> Phi-3-mini fine-tunado</div>
+        <div class="opt-desc">Usa o <strong>seu modelo treinado no Colab</strong> convertido para GGUF e registrado no Ollama (<code>phi3-medassist</code>). Sem GPU. Sem API key. Máxima especialização médica. Veja as instruções no notebook Colab (Células 12b/12c).</div>
+      </div>
 
       <div class="modal-fields" id="fields-openai">
         <div class="field">
@@ -1073,6 +1077,20 @@ html, body {
         <div class="field">
           <label>Modelo</label>
           <input type="text" id="f-model-ollama" value="gemma3:4b" />
+        </div>
+      </div>
+      <div class="modal-fields" id="fields-modo3" style="display:none">
+        <div class="field">
+          <label>URL do Ollama</label>
+          <input type="text" id="f-url-modo3" value="http://localhost:11434/v1" />
+        </div>
+        <div class="field">
+          <label>Modelo (registrado no Ollama)</label>
+          <input type="text" id="f-model-modo3" value="phi3-medassist" />
+        </div>
+        <div class="field" style="font-size:11px;color:var(--gray-400);margin-top:4px;line-height:1.5">
+          Pré-requisito: exporte o GGUF no Colab (Células 12b/12c) e registre com<br>
+          <code>cd outputs/gguf &amp;&amp; ollama create phi3-medassist -f Modelfile</code>
         </div>
       </div>
     </div>
@@ -1104,7 +1122,9 @@ async function loadInfo() {
       openai: '☁ ' + m,
       ollama: '🦙 ' + m,
     };
-    document.getElementById('chipBackend').textContent = modeLabels[d.mode] || '☁ ' + m;
+    const chip = m === 'phi3-medassist' ? '🧬 ' + m
+               : modeLabels[d.mode] || '☁ ' + m;
+    document.getElementById('chipBackend').textContent = chip;
   } catch(e) {}
 }
 loadInfo();
@@ -1343,7 +1363,7 @@ function closeModalOutside(e) {
 
 function selectOpt(opt) {
   selectedOpt = opt;
-  ['openai','ollama'].forEach(o => {
+  ['openai','ollama','modo3'].forEach(o => {
     document.getElementById('opt-'+o).classList.toggle('active', o === opt);
     document.getElementById('fields-'+o).style.display = o === opt ? '' : 'none';
   });
@@ -1355,10 +1375,14 @@ async function applyConfig() {
     body.api_key  = document.getElementById('f-apikey').value;
     body.model    = document.getElementById('f-model-openai').value;
     body.base_url = '';
-  } else {
-    // ollama
+  } else if (selectedOpt === 'ollama') {
     body.base_url = document.getElementById('f-url-ollama').value;
     body.model    = document.getElementById('f-model-ollama').value;
+    body.api_key  = 'ollama';
+  } else {
+    // modo3 — phi3-medassist via Ollama
+    body.base_url = document.getElementById('f-url-modo3').value;
+    body.model    = document.getElementById('f-model-modo3').value;
     body.api_key  = 'ollama';
   }
 
@@ -1368,10 +1392,12 @@ async function applyConfig() {
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify(body),
     }).then(r => r.json());
-    const chipLabel = selectedOpt === 'ollama'
-      ? '🦙 ' + d.model
-      : '☁ ' + d.model;
-    document.getElementById('pBackend').textContent    = selectedOpt === 'ollama' ? 'ollama' : 'openai';
+    const chipLabel = selectedOpt === 'openai'
+      ? '☁ ' + d.model
+      : selectedOpt === 'modo3'
+      ? '🧬 ' + d.model
+      : '🦙 ' + d.model;
+    document.getElementById('pBackend').textContent    = selectedOpt === 'openai' ? 'openai' : 'ollama';
     document.getElementById('pModel').textContent      = d.model;
     document.getElementById('chipBackend').textContent = chipLabel;
     closeModal();

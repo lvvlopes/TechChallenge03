@@ -10,10 +10,9 @@ __pycache__/
 venv/
 .venv/
 
-# Adaptador LoRA — arquivo grande (114 MB), não sobe no Git
-# Publique o ZIP: outputs/model/adapter_model.safetensors.zip
-# Quem clonar deve descompactar o ZIP nesta mesma pasta
+# Arquivos grandes — disponíveis via Google Drive (ver README.md Passo 5)
 outputs/model/adapter_model.safetensors
+outputs/gguf/*.gguf
 
 # Outputs grandes
 outputs/vectorstore/
